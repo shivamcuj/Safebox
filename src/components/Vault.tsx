@@ -22,9 +22,11 @@ import {
   Download,
   ScrollText,
   ArrowUpDown,
+  KeyRound,
 } from "lucide-react";
 import { EntryForm } from "./EntryForm";
 import { AuditDialog } from "./AuditDialog";
+import { ChangeMasterPasswordDialog } from "./ChangeMasterPasswordDialog";
 import { toast } from "sonner";
 
 type SortKey = "site" | "updated" | "created";
@@ -37,6 +39,7 @@ export function Vault() {
   const [editing, setEditing] = useState<VaultEntry | null>(null);
   const [open, setOpen] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
+  const [showChangePw, setShowChangePw] = useState(false);
   const [reveal, setReveal] = useState<Record<string, boolean>>({});
 
   const allTags = useMemo(() => {
@@ -117,6 +120,9 @@ export function Vault() {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowAudit(true)}>
                   <ScrollText className="mr-2 h-4 w-4" /> Audit log
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowChangePw(true)}>
+                  <KeyRound className="mr-2 h-4 w-4" /> Change master password
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={lock}>
@@ -257,6 +263,7 @@ export function Vault() {
 
       <EntryForm open={open} onOpenChange={setOpen} entry={editing} />
       <AuditDialog open={showAudit} onOpenChange={setShowAudit} />
+      <ChangeMasterPasswordDialog open={showChangePw} onOpenChange={setShowChangePw} />
     </div>
   );
 }
