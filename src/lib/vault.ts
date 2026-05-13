@@ -39,7 +39,9 @@ export interface AuditEvent {
     | "entry_updated"
     | "entry_deleted"
     | "vault_exported"
-    | "vault_imported";
+    | "vault_imported"
+    | "master_password_changed"
+    | "master_password_change_failed";
   detail?: string;
 }
 
