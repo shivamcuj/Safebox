@@ -46,7 +46,7 @@ export interface EncryptedBlob {
 export async function encryptJSON(payload: unknown, key: CryptoKey, salt: Uint8Array): Promise<EncryptedBlob> {
   const iv = crypto.getRandomValues(new Uint8Array(IV_LEN));
   const data = enc.encode(JSON.stringify(payload));
-  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, key, data);
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, key, data as unknown as BufferSource);
   return { v: 1, salt: toB64(salt), iv: toB64(iv), data: toB64(ct) };
 }
 
