@@ -28,7 +28,7 @@ export async function deriveKey(password: string, salt: Uint8Array): Promise<Cry
     ["deriveKey"],
   );
   return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: "SHA-256" },
+    { name: "PBKDF2", salt: salt as unknown as BufferSource, iterations: PBKDF2_ITERATIONS, hash: "SHA-256" },
     baseKey,
     { name: "AES-GCM", length: 256 },
     false,
@@ -46,14 +46,14 @@ export interface EncryptedBlob {
 export async function encryptJSON(payload: unknown, key: CryptoKey, salt: Uint8Array): Promise<EncryptedBlob> {
   const iv = crypto.getRandomValues(new Uint8Array(IV_LEN));
   const data = enc.encode(JSON.stringify(payload));
-  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv as BufferSource }, key, data);
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, key, data);
   return { v: 1, salt: toB64(salt), iv: toB64(iv), data: toB64(ct) };
 }
 
 export async function decryptJSON<T>(blob: EncryptedBlob, key: CryptoKey): Promise<T> {
   const iv = fromB64(blob.iv);
   const ct = fromB64(blob.data);
-  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as BufferSource }, key, ct);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, key, ct);
   return JSON.parse(dec.decode(pt)) as T;
 }
 
