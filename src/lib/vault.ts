@@ -39,7 +39,9 @@ export interface AuditEvent {
     | "entry_updated"
     | "entry_deleted"
     | "vault_exported"
-    | "vault_imported";
+    | "vault_imported"
+    | "master_password_changed"
+    | "master_password_change_failed";
   detail?: string;
 }
 
@@ -88,6 +90,7 @@ interface VaultState {
   deleteEntry: (id: string) => Promise<void>;
   exportVault: () => string;
   importVault: (json: string, masterPassword: string) => Promise<boolean>;
+  changeMasterPassword: (current: string, next: string) => Promise<boolean>;
 }
 
 export const useVault = create<VaultState>((set, get) => ({
@@ -184,6 +187,29 @@ export const useVault = create<VaultState>((set, get) => ({
     } catch {
       return false;
     }
+  },
+  changeMasterPassword: async (current, next) => {
+    const blob = loadBlob();
+    if (!blob) return false;
+    const oldSalt = saltFromB64(blob.salt);
+    try {
+      // Verify current password by decrypting the persisted blob.
+      const oldKey = await deriveKey(current, oldSalt);
+      await decryptJSON<VaultData>(blob, oldKey);
+    } catch {
+      pushAudit({ type: "master_password_change_failed" });
+      set({ audit: loadAudit() });
+      return false;
+    }
+    // Re-encrypt the in-memory data with a new salt + derived key.
+    const newSaltBytes = newSalt();
+    const newKey = await deriveKey(next, newSaltBytes);
+    const data = get().data;
+    const newBlob = await encryptJSON(data, newKey, newSaltBytes);
+    saveBlob(newBlob);
+    pushAudit({ type: "master_password_changed" });
+    set({ key: newKey, salt: newSaltBytes, audit: loadAudit() });
+    return true;
   },
 }));
 
