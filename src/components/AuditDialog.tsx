@@ -18,6 +18,8 @@ const labels: Record<AuditEvent["type"], string> = {
   entry_deleted: "Entry deleted",
   vault_exported: "Vault exported",
   vault_imported: "Vault imported",
+  master_password_changed: "Master password changed",
+  master_password_change_failed: "Master password change failed",
 };
 
 export function AuditDialog({
@@ -52,7 +54,9 @@ export function AuditDialog({
                 <div className="min-w-0">
                   <div
                     className={`text-sm font-medium ${
-                      e.type === "unlock_failed" ? "text-destructive" : "text-foreground"
+                      e.type === "unlock_failed" || e.type === "master_password_change_failed"
+                        ? "text-destructive"
+                        : "text-foreground"
                     }`}
                   >
                     {labels[e.type]}
