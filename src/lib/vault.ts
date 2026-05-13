@@ -88,6 +88,7 @@ interface VaultState {
   deleteEntry: (id: string) => Promise<void>;
   exportVault: () => string;
   importVault: (json: string, masterPassword: string) => Promise<boolean>;
+  changeMasterPassword: (current: string, next: string) => Promise<boolean>;
 }
 
 export const useVault = create<VaultState>((set, get) => ({
