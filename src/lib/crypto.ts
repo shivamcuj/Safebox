@@ -53,7 +53,7 @@ export async function encryptJSON(payload: unknown, key: CryptoKey, salt: Uint8A
 export async function decryptJSON<T>(blob: EncryptedBlob, key: CryptoKey): Promise<T> {
   const iv = fromB64(blob.iv);
   const ct = fromB64(blob.data);
-  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, key, ct);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, key, ct as unknown as BufferSource);
   return JSON.parse(dec.decode(pt)) as T;
 }
 
