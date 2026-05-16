@@ -221,7 +221,7 @@ export function EntryForm({ open, onOpenChange, entry }: Props) {
             />
           </div>
 
-          <div className="flex items-center justify-between gap-2 pt-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
             {entry ? (
               <Button
                 type="button"
@@ -234,7 +234,7 @@ export function EntryForm({ open, onOpenChange, entry }: Props) {
             ) : (
               <span />
             )}
-            <div className="flex gap-2">
+            <div className="flex flex-1 justify-end gap-2 sm:flex-none">
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
