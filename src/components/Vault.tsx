@@ -91,16 +91,16 @@ export function Vault() {
         className="pointer-events-none fixed inset-0"
         style={{ background: "var(--gradient-vault)" }}
       />
-      <div className="relative mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Header */}
-        <header className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-3 sm:mb-8">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/30">
               <ShieldCheck className="h-5 w-5 text-primary" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-lg font-semibold tracking-tight">Vaultkeep</h1>
-              <p className="text-xs text-muted-foreground">
+              <p className="truncate text-xs text-muted-foreground">
                 {data.entries.length}{" "}
                 {data.entries.length === 1 ? "entry" : "entries"} · encrypted locally
               </p>
@@ -136,7 +136,8 @@ export function Vault() {
                 setOpen(true);
               }}
             >
-              <Plus className="mr-2 h-4 w-4" /> New entry
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">New entry</span>
             </Button>
           </div>
         </header>
@@ -154,9 +155,14 @@ export function Vault() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <ArrowUpDown className="mr-2 h-4 w-4" />
-                {sort === "site" ? "A-Z" : sort === "created" ? "Newest" : "Recently updated"}
+              <Button variant="outline" className="sm:w-auto">
+                <ArrowUpDown className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">
+                  {sort === "site" ? "A-Z" : sort === "created" ? "Newest" : "Recently updated"}
+                </span>
+                <span className="sm:hidden">
+                  {sort === "site" ? "A-Z" : sort === "created" ? "Newest" : "Updated"}
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -197,9 +203,9 @@ export function Vault() {
             {filtered.map((e) => (
               <li
                 key={e.id}
-                className="group rounded-xl border border-border bg-card/60 p-4 backdrop-blur-sm transition hover:border-primary/40 hover:bg-card"
+                className="group rounded-xl border border-border bg-card/60 p-3 backdrop-blur-sm transition hover:border-primary/40 hover:bg-card sm:p-4"
               >
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   <SiteIcon site={e.site} />
                   <div className="min-w-0 flex-1">
                     <button
@@ -215,7 +221,7 @@ export function Vault() {
                       </div>
                     </button>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <code className="rounded bg-muted px-2 py-0.5 font-mono text-xs">
+                      <code className="max-w-full break-all rounded bg-muted px-2 py-0.5 font-mono text-xs">
                         {reveal[e.id] ? e.password : "•".repeat(Math.min(12, e.password.length))}
                       </code>
                       {e.tags.map((t) => (
@@ -228,7 +234,7 @@ export function Vault() {
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 opacity-70 transition group-hover:opacity-100">
+                  <div className="flex shrink-0 items-center gap-1 opacity-100 transition sm:opacity-70 sm:group-hover:opacity-100">
                     <IconBtn
                       title={reveal[e.id] ? "Hide password" : "Show password"}
                       onClick={() =>
