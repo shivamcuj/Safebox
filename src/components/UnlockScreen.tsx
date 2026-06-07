@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useVault } from "@/lib/vault";
+import { HowToUseDialog } from "./HowToUseDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, ShieldCheck, KeyRound, Upload } from "lucide-react";
+import { Lock, ShieldCheck, KeyRound, Upload, CircleHelp } from "lucide-react";
 import { toast } from "sonner";
 import { passwordStrength } from "@/lib/crypto";
 
@@ -14,6 +15,7 @@ export function UnlockScreen() {
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<"main" | "import">("main");
   const [importJson, setImportJson] = useState("");
+  const [showHelp, setShowHelp] = useState(false);
 
   const strength = passwordStrength(pw);
 
