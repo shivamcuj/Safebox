@@ -70,7 +70,7 @@ export function UnlockScreen() {
       <button
         onClick={() => setShowHelp(true)}
         className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground z-10"
-        title="How to use Vaultkeep"
+        title="How to use Safebox"
       >
         <CircleHelp className="h-5 w-5" />
       </button>
@@ -80,7 +80,7 @@ export function UnlockScreen() {
             <ShieldCheck className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <div className="text-lg font-semibold tracking-tight">Vaultkeep</div>
+            <div className="text-lg font-semibold tracking-tight">Safebox</div>
             <div className="text-xs text-muted-foreground">Local-only password vault</div>
           </div>
         </div>
