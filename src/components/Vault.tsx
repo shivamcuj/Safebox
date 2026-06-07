@@ -82,7 +82,7 @@ export function Vault() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `vaultkeep-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `safebox-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Encrypted backup downloaded");
@@ -102,7 +102,7 @@ export function Vault() {
               <ShieldCheck className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-semibold tracking-tight">Vaultkeep</h1>
+              <h1 className="text-lg font-semibold tracking-tight">Safebox</h1>
               <p className="truncate text-xs text-muted-foreground">
                 {data.entries.length}{" "}
                 {data.entries.length === 1 ? "entry" : "entries"} · encrypted locally
@@ -114,7 +114,7 @@ export function Vault() {
               variant="outline"
               size="icon"
               onClick={() => setShowHelp(true)}
-              title="How to use Vaultkeep"
+              title="How to use Safebox"
             >
               <CircleHelp className="h-4 w-4" />
             </Button>
