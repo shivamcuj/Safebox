@@ -67,6 +67,13 @@ export function UnlockScreen() {
         className="pointer-events-none absolute inset-0"
         style={{ background: "var(--gradient-vault)" }}
       />
+      <button
+        onClick={() => setShowHelp(true)}
+        className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground z-10"
+        title="How to use Vaultkeep"
+      >
+        <CircleHelp className="h-5 w-5" />
+      </button>
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
         <div className="mb-10 flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/30">
@@ -197,6 +204,8 @@ export function UnlockScreen() {
           AES-256-GCM · PBKDF2 · Local-only
         </p>
       </div>
+
+      <HowToUseDialog open={showHelp} onOpenChange={setShowHelp} />
     </div>
   );
 }
