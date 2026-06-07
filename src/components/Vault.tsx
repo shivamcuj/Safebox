@@ -110,6 +110,14 @@ export function Vault() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setShowHelp(true)}
+              title="How to use Vaultkeep"
+            >
+              <CircleHelp className="h-4 w-4" />
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
@@ -273,6 +281,7 @@ export function Vault() {
       <EntryForm open={open} onOpenChange={setOpen} entry={editing} />
       <AuditDialog open={showAudit} onOpenChange={setShowAudit} />
       <ChangeMasterPasswordDialog open={showChangePw} onOpenChange={setShowChangePw} />
+      <HowToUseDialog open={showHelp} onOpenChange={setShowHelp} />
     </div>
   );
 }
