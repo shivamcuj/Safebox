@@ -68,6 +68,11 @@ Built with **React 19**, **TypeScript**, **TanStack Start** (React Router v7), *
 bun install
 ```
 
+Alternatively, if you already have Node.js installed, you can run
+```bash
+npm install -g bun
+```
+
 This installs all dependencies including `@cloudflare/vite-plugin` (Cloudflare Workers integration for Vite) and Wrangler (the Cloudflare Workers CLI, available transitively).
 
 ### Build
