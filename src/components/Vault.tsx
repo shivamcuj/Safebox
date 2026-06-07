@@ -23,10 +23,12 @@ import {
   ScrollText,
   ArrowUpDown,
   KeyRound,
+  CircleHelp,
 } from "lucide-react";
 import { EntryForm } from "./EntryForm";
 import { AuditDialog } from "./AuditDialog";
 import { ChangeMasterPasswordDialog } from "./ChangeMasterPasswordDialog";
+import { HowToUseDialog } from "./HowToUseDialog";
 import { toast } from "sonner";
 
 type SortKey = "site" | "updated" | "created";
@@ -40,6 +42,7 @@ export function Vault() {
   const [open, setOpen] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
   const [showChangePw, setShowChangePw] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [reveal, setReveal] = useState<Record<string, boolean>>({});
 
   const allTags = useMemo(() => {
