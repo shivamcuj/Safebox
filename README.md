@@ -1,4 +1,4 @@
-# vaultkeep
+# Safebox
 
 A **zero-network, local-only password manager** that runs entirely in your browser. All data is encrypted with **AES-256-GCM** (key derived via **PBKDF2** with 250,000 iterations) and stored exclusively in the browser's `localStorage`. No data is ever sent to a server — there is no backend, no database, no API calls.
 
@@ -174,7 +174,7 @@ This deploys the built worker to Cloudflare's global network under the name `tan
 #### Step 5: Configure a custom domain (optional)
 
 ```bash
-bunx wrangler triggers deploy --domain vaultkeep.example.com
+bunx wrangler triggers deploy --domain safebox.example.com
 ```
 
 Or set a custom domain in the Cloudflare Dashboard under **Workers & Pages > tanstack-start-app > Triggers > Custom Domain**.
@@ -224,7 +224,7 @@ User Input → UI Component → Zustand Store → crypto.ts (Web Crypto API)
 ```
 
 - **`localStorage` keys used:**
-  - `"vaultkeep:v1"` — encrypted vault blob
+  - `"vaultkeep:v1"` — encrypted vault blob (legacy name, kept for data compatibility)
   - `"vaultkeep:audit:v1"` — audit log array (max 200 events)
 - The application is server-side rendered via **Cloudflare Workers** with a TanStack Start middleware layer, but all vault operations are purely client-side.
 

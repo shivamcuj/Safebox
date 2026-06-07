@@ -24,7 +24,7 @@ export function HowToUseDialog({
               <ShieldCheck className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <DialogTitle>How to use Vaultkeep</DialogTitle>
+              <DialogTitle>How to use Safebox</DialogTitle>
               <DialogDescription>
                 A zero-network, local-only password manager
               </DialogDescription>
@@ -33,10 +33,10 @@ export function HowToUseDialog({
         </DialogHeader>
         <ScrollArea className="px-6 pb-6 max-h-[calc(85vh-100px)]">
           <div className="space-y-6 pr-4">
-            {/* What is Vaultkeep */}
-            <Section icon={<ShieldCheck className="h-4 w-4" />} title="What is Vaultkeep?">
+            {/* What is Safebox */}
+            <Section icon={<ShieldCheck className="h-4 w-4" />} title="What is Safebox?">
               <p>
-                Vaultkeep is a password manager that runs entirely in your browser. 
+                Safebox is a password manager that runs entirely in your browser. 
                 Unlike cloud-based services, your vault never leaves your device. 
                 All data is encrypted with <strong>AES-256-GCM</strong> using a key 
                 derived from your master password via <strong>PBKDF2</strong> (250,000 iterations) 

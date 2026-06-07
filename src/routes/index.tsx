@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Vaultkeep — Local-only password manager" },
+      { title: "Safebox — Local-only password manager" },
       {
         name: "description",
         content:
