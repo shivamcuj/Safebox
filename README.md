@@ -59,6 +59,8 @@ Built with **React 19**, **TypeScript**, **TanStack Start** (React Router v7), *
 ### Prerequisites
 
 - [**Bun**](https://bun.sh) (v1.x) — the project uses `bun.lock` and `bunfig.toml`
+- **Node.js** 18+ (if you prefer npm/pnpm as an alternative package manager)
+- A **Cloudflare account** (for Cloudflare Workers deployment)
 
 ### Install
 
@@ -66,13 +68,38 @@ Built with **React 19**, **TypeScript**, **TanStack Start** (React Router v7), *
 bun install
 ```
 
+This installs all dependencies including `@cloudflare/vite-plugin` (Cloudflare Workers integration for Vite) and Wrangler (the Cloudflare Workers CLI, available transitively).
+
+### Build
+
+```bash
+bun run build
+```
+
+This runs `vite build` which produces two builds:
+
+| Output | Directory | Contents |
+|--------|-----------|----------|
+| **Client** | `dist/client/` | Static JS/CSS assets served to the browser |
+| **SSR (Worker)** | `dist/server/` | Cloudflare Workers bundle + auto-generated `wrangler.json` config |
+
+The SSR build outputs include:
+- `index.js` — Worker entry point
+- `wrangler.json` — Auto-generated deployment config (overrides `wrangler.jsonc` during deploy)
+- `assets/server-*.js` — Server-side React rendering code (~719 KB)
+- `assets/worker-entry-*.js` — Cloudflare Workers adapter (~21 KB)
+- `assets/router-*.js` — TanStack Router bundle (~222 KB)
+- `assets/index-*.js` — Application source (~418 KB)
+
+> The `@cloudflare/vite-plugin` handles the SSR build and generates the `dist/server/wrangler.json` automatically. There is no separate `wrangler build` step.
+
 ### Development
 
 ```bash
 bun run dev
 ```
 
-Starts the Vite development server.
+Starts the Vite development server with Cloudflare Workers integration via `@cloudflare/vite-plugin`. The app runs locally with SSR support.
 
 ---
 
@@ -80,8 +107,8 @@ Starts the Vite development server.
 
 | Command | Description |
 |---------|-------------|
-| `bun run dev` | Start development server |
-| `bun run build` | Production build |
+| `bun run dev` | Start development server (Vite + Cloudflare Workers) |
+| `bun run build` | Production build (Vite + Cloudflare Workers bundle) |
 | `bun run build:dev` | Build with development mode |
 | `bun run preview` | Preview production build locally |
 | `bun run lint` | Run ESLint |
@@ -93,27 +120,94 @@ Starts the Vite development server.
 
 ### Cloudflare Workers (recommended)
 
-The project is configured for Cloudflare Workers via `wrangler.jsonc`:
+The project is configured for **Cloudflare Workers** via `wrangler.jsonc` (`src/server.ts` is the worker entry point). The `@cloudflare/vite-plugin` integrates Cloudflare Workers builds directly into the Vite pipeline.
+
+#### Step 1: Authenticate Wrangler with Cloudflare
 
 ```bash
-# Build the project
+bunx wrangler login
+```
+
+This opens a browser window to authenticate Wrangler with your Cloudflare account. Alternatively, set a Cloudflare API token:
+
+```bash
+bunx wrangler login --api-key
+```
+
+#### Step 2: Build the project
+
+```bash
 bun run build
+```
 
-# Deploy to Cloudflare Workers (requires wrangler login)
-bunx wrangler deploy
+This runs `vite build` which produces two outputs:
+- **`dist/client/`** — Browser static assets (JS, CSS)
+- **`dist/server/`** — Cloudflare Workers SSR bundle (includes an auto-generated `wrangler.json`)
 
-# Preview locally with Wrangler
+The `@cloudflare/vite-plugin` integrates the Worker build into Vite — no separate `wrangler build` step is needed.
+
+#### Step 3: Preview locally (optional)
+
+```bash
+bun run preview
+```
+
+Or preview using Wrangler's local dev server:
+
+```bash
 bunx wrangler dev
 ```
 
-### Static hosting
+#### Step 4: Deploy to Cloudflare Workers
 
-You can also serve the built output (`dist/`) from any static web server (nginx, Vercel, Netlify, Cloudflare Pages, etc.):
+```bash
+bunx wrangler deploy
+```
+
+This deploys the built worker to Cloudflare's global network under the name `tanstack-start-app` (as configured in `wrangler.jsonc`). Your app will be live at `https://tanstack-start-app.<your-subdomain>.workers.dev`.
+
+#### Step 5: Configure a custom domain (optional)
+
+```bash
+bunx wrangler triggers deploy --domain vaultkeep.example.com
+```
+
+Or set a custom domain in the Cloudflare Dashboard under **Workers & Pages > tanstack-start-app > Triggers > Custom Domain**.
+
+### Environment Variables (Cloudflare Workers)
+
+For local development with secrets, create a `.dev.vars` file (already gitignored):
+
+```env
+# .dev.vars
+MY_SECRET=my-value
+```
+
+For production secrets:
+
+```bash
+bunx wrangler secret put MY_SECRET
+```
+
+> **Note**: This application is fully client-side for vault operations. No environment variables are required for core functionality.
+
+### Updating a deployed worker
 
 ```bash
 bun run build
-# Serve the dist/ directory with your preferred static server
+bunx wrangler deploy
 ```
+
+### Static hosting (alternative)
+
+While the primary deployment target is Cloudflare Workers (SSR), you can serve the app as a static SPA. After building, serve the `dist/client/` directory:
+
+```bash
+bun run build
+# Serve dist/client/ with any static server (nginx, Vercel, Netlify, Cloudflare Pages, etc.)
+```
+
+> **Note**: Static hosting loses SSR capabilities. The vault functionality (cryptography, localStorage) is entirely client-side and will still work, but server-side rendering and SSR error handling will not be available.
 
 ---
 
