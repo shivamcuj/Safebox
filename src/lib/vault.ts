@@ -192,23 +192,23 @@ export const useVault = create<VaultState>((set, get) => ({
     const blob = loadBlob();
     if (!blob) return false;
     const oldSalt = saltFromB64(blob.salt);
+    let verifiedData: VaultData;
     try {
-      // Verify current password by decrypting the persisted blob.
       const oldKey = await deriveKey(current, oldSalt);
-      await decryptJSON<VaultData>(blob, oldKey);
+      verifiedData = await decryptJSON<VaultData>(blob, oldKey);
     } catch {
       pushAudit({ type: "master_password_change_failed" });
       set({ audit: loadAudit() });
       return false;
     }
-    // Re-encrypt the in-memory data with a new salt + derived key.
+    // Re-encrypt using the verified blob data (not in-memory state),
+    // so multi-tab edits are never silently lost.
     const newSaltBytes = newSalt();
     const newKey = await deriveKey(next, newSaltBytes);
-    const data = get().data;
-    const newBlob = await encryptJSON(data, newKey, newSaltBytes);
+    const newBlob = await encryptJSON(verifiedData, newKey, newSaltBytes);
     saveBlob(newBlob);
     pushAudit({ type: "master_password_changed" });
-    set({ key: newKey, salt: newSaltBytes, audit: loadAudit() });
+    set({ key: newKey, salt: newSaltBytes, data: verifiedData, audit: loadAudit() });
     return true;
   },
 }));

@@ -36,7 +36,10 @@ export function ChangeMasterPasswordDialog({
   };
 
   const handle = async () => {
-    if (!current || !next) return;
+    if (!current || !next) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
     if (next.length < 8) {
       toast.error("New password must be at least 8 characters");
       return;
