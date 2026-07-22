@@ -89,7 +89,7 @@ interface VaultState {
   updateEntry: (id: string, patch: Partial<VaultEntry>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   exportVault: () => string;
-  importVault: (json: string, masterPassword: string) => Promise<boolean>;
+  importVault: (json: string, masterPassword: string) => Promise<"ok" | "invalid_file" | "wrong_password">;
   changeMasterPassword: (current: string, next: string) => Promise<boolean>;
 }
 
@@ -167,11 +167,18 @@ export const useVault = create<VaultState>((set, get) => ({
     return JSON.stringify(blob, null, 2);
   },
   importVault: async (json, pw) => {
+    let blob: EncryptedBlob;
     try {
-      const blob = JSON.parse(json) as EncryptedBlob;
-      if (!blob || blob.v !== 1 || !blob.salt || !blob.iv || !blob.data) return false;
-      const salt = saltFromB64(blob.salt);
-      const key = await deriveKey(pw, salt);
+      blob = JSON.parse(json) as EncryptedBlob;
+    } catch {
+      return "invalid_file";
+    }
+    if (!blob || blob.v !== 1 || !blob.salt || !blob.iv || !blob.data) {
+      return "invalid_file";
+    }
+    const salt = saltFromB64(blob.salt);
+    const key = await deriveKey(pw, salt);
+    try {
       const data = await decryptJSON<VaultData>(blob, key);
       saveBlob(blob);
       pushAudit({ type: "vault_imported" });
@@ -183,9 +190,11 @@ export const useVault = create<VaultState>((set, get) => ({
         data,
         audit: loadAudit(),
       });
-      return true;
+      return "ok";
     } catch {
-      return false;
+      pushAudit({ type: "unlock_failed" });
+      set({ audit: loadAudit() });
+      return "wrong_password";
     }
   },
   changeMasterPassword: async (current, next) => {

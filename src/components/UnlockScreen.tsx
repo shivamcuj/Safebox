@@ -44,12 +44,16 @@ export function UnlockScreen() {
   };
 
   const handleImport = async () => {
-    if (!pw || !importJson) return;
+    if (!pw || !importJson) {
+      toast.error("Please select a backup file and enter your master password");
+      return;
+    }
     setBusy(true);
     try {
-      const ok = await importVault(importJson, pw);
-      if (ok) toast.success("Vault imported");
-      else toast.error("Import failed — bad file or password");
+      const result = await importVault(importJson, pw);
+      if (result === "ok") toast.success("Vault imported");
+      else if (result === "wrong_password") toast.error("Wrong master password");
+      else toast.error("Invalid backup file");
     } finally {
       setBusy(false);
     }
@@ -58,6 +62,7 @@ export function UnlockScreen() {
   const onFile = (f: File) => {
     const r = new FileReader();
     r.onload = () => setImportJson(String(r.result ?? ""));
+    r.onerror = () => toast.error("Could not read file");
     r.readAsText(f);
   };
 
